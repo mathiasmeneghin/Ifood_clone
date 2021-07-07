@@ -8,8 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,12 +23,14 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.mathias.ifood.R;
 import com.mathias.ifood.helper.ConfiguracaoFirebase;
+import com.mathias.ifood.helper.UsuarioFirebase;
 
 public class AutenticacaoActivity extends AppCompatActivity {
 
     private Button botaoAcessar;
     private EditText campoEmail, campoSenha;
-    private SwitchCompat tipoAcesso;
+    private SwitchCompat tipoAcesso,tipoUsuario;
+    private LinearLayout linearTipoUsuario;
 
     private FirebaseAuth autenticacao;
 
@@ -35,15 +38,26 @@ public class AutenticacaoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autenticacao);
-        getSupportActionBar().hide();
+
 
         inicializaComponentes();
 
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
-        //autenticacao.signOut();
+       // autenticacao.signOut();
 
         //verificar usuario logado
         verificaUsuarioLogado();
+
+        tipoAcesso.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {// empresa
+                   linearTipoUsuario.setVisibility(View.VISIBLE);
+                }else { // usuario
+                    linearTipoUsuario.setVisibility(View.GONE);
+                }
+            }
+        });
 
 
         botaoAcessar.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +78,9 @@ public class AutenticacaoActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(AutenticacaoActivity.this, "Cadastro Realizado com sucesso", Toast.LENGTH_SHORT).show();
-                                        abrirTelaPrincipal();
+                                        String tipoUsuario = getTipoUsuario();
+                                        UsuarioFirebase.atualizarTipoUsuario(tipoUsuario);
+                                        abrirTelaPrincipal(tipoUsuario);
 
                                     }else {
 
@@ -97,7 +113,8 @@ public class AutenticacaoActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(AutenticacaoActivity.this, "Logado com sucesso", Toast.LENGTH_SHORT).show();
-                                        abrirTelaPrincipal();
+                                        String tipoUsuario = task.getResult().getUser().getDisplayName();
+                                        abrirTelaPrincipal(tipoUsuario);
                                     }else {
                                         Toast.makeText(AutenticacaoActivity.this, "Erro ao fazer login" + task.getException(), Toast.LENGTH_SHORT).show();
                                     }
@@ -128,21 +145,32 @@ public class AutenticacaoActivity extends AppCompatActivity {
 
     }
 
+    private String getTipoUsuario() {
+        return tipoUsuario.isChecked() ? "E" : "U";
+    }
+
     private void verificaUsuarioLogado() {
         FirebaseUser usuarioAtual = autenticacao.getCurrentUser();
          if(usuarioAtual != null) {
-           abrirTelaPrincipal();
+             String tipoUsuario = usuarioAtual.getDisplayName();
+           abrirTelaPrincipal(tipoUsuario);
          }
     }
 
-    private void abrirTelaPrincipal() {
-        startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+    private void abrirTelaPrincipal(String tipoUsuario) {
+        if(tipoUsuario.equals("E")) {// empresa
+            startActivity(new Intent(getApplicationContext(),EmpresaActivity.class));
+        }else {// usuario
+            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+        }
     }
 
     private void inicializaComponentes () {
-        campoEmail = findViewById(R.id.editCadastroEmail);
-        campoSenha = findViewById(R.id.editCadastroSenha);
+        campoEmail = findViewById(R.id.editProdutoNome);
+        campoSenha = findViewById(R.id.editProdutoDescricao);
         botaoAcessar = findViewById(R.id.buttonAcesso);
         tipoAcesso = findViewById(R.id.switchAcesso);
+        tipoUsuario = findViewById(R.id.tipoUsuario);
+        linearTipoUsuario = findViewById(R.id.linearTipoUsuario);
     }
 }
