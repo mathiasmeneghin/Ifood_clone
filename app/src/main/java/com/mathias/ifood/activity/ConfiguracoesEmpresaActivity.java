@@ -206,8 +206,8 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
     }
 
     private void inicializarComponentes() {
-        editEmpresaNome = findViewById(R.id.editProdutoNome);
-        editEmpresaCategoria = findViewById(R.id.editProdutoDescricao);
+        editEmpresaNome = findViewById(R.id.editUsuarioNome);
+        editEmpresaCategoria = findViewById(R.id.editUsuarioEndereco);
         editEmpresaTaxa = findViewById(R.id.editProdutoPreco);
         editEmpresaTempo = findViewById(R.id.editEmpresaTempo);
         imagePerfilEmpresa = findViewById(R.id.imagePerfilEmpresa);

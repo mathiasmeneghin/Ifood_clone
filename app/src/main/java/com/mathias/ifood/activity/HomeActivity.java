@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +24,7 @@ import com.mathias.ifood.R;
 import com.mathias.ifood.adapter.AdapterEmpresa;
 import com.mathias.ifood.adapter.AdapterProduto;
 import com.mathias.ifood.helper.ConfiguracaoFirebase;
+import com.mathias.ifood.listener.RecyclerItemClickListener;
 import com.mathias.ifood.model.Empresa;
 import com.mathias.ifood.model.Produto;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -75,6 +78,30 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        //configurar evento de clique
+        recyclerEmpresa.addOnItemTouchListener(new RecyclerItemClickListener(
+                this,
+                recyclerEmpresa, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Empresa empresaSelecionada = empresas.get(position);
+                Intent i = new Intent(HomeActivity.this,CardapioActivity.class);
+                i.putExtra("empresa",empresaSelecionada);
+                startActivity(i);
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        }
+        ));
     }
 
     private void pesquisarEmpresas(String pesquisa) {

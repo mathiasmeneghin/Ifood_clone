@@ -9,11 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.mathias.ifood.R;
-import com.mathias.ifood.helper.ConfiguracaoFirebase;
 import com.mathias.ifood.helper.UsuarioFirebase;
-import com.mathias.ifood.model.Empresa;
 import com.mathias.ifood.model.Produto;
 
 public class NovoProdutoEmpresaActivity extends AppCompatActivity {
@@ -91,8 +88,8 @@ public class NovoProdutoEmpresaActivity extends AppCompatActivity {
     }
 
     private void inicializarComponentes() {
-        editProdutoNome = findViewById(R.id.editProdutoNome);
-        editProdutoDescricao = findViewById(R.id.editProdutoDescricao);
+        editProdutoNome = findViewById(R.id.editUsuarioNome);
+        editProdutoDescricao = findViewById(R.id.editUsuarioEndereco);
         editProdutoPreco = findViewById(R.id.editProdutoPreco);
         buttonSalvar = findViewById(R.id.buttonSalvar);
 
